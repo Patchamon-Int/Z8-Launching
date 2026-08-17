@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Launch Performance Dashboard — 8 Weeks Since Launch</title>
+<style>
+  :root {
+    --navy: #1F3864; --blue: #2E75B6; --green: #0CA30C; --red: #D03B3B;
+    --muted: #C3C2B7; --ink: #1A1A1A; --ink2: #52514E;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px 32px 48px;
+    font-family: Arial, "Segoe UI", Helvetica, sans-serif;
+    background: #FFFFFF; color: var(--ink);
+  }
+  h1 { color: var(--navy); font-size: 22px; margin: 0 0 4px; }
+  .subtitle { color: var(--ink2); font-size: 12px; font-style: italic; margin: 0 0 20px; }
+  .kpi-row {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: #F2F2F0; border: 1px solid var(--muted); border-radius: 4px;
+    overflow: hidden; text-align: center;
+  }
+  .kpi-label {
+    background: var(--navy); color: #fff; font-size: 11px; font-weight: bold;
+    padding: 8px 6px; line-height: 1.25; min-height: 34px; display:flex; align-items:center; justify-content:center;
+  }
+  .kpi-value { font-size: 26px; font-weight: bold; padding: 14px 6px; }
+  .chart-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .chart-box {
+    border: 1px solid var(--muted); border-radius: 4px; padding: 12px;
+    background: #fff;
+  }
+  .chart-title { font-size: 13px; font-weight: bold; color: var(--navy); margin-bottom: 6px; text-align:center; }
+  .chart-canvas svg { width: 100%; height: auto; display:block; }
+  .chart-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:4px; }
+  .legend-item { font-size: 10px; color: var(--ink2); display:flex; align-items:center; gap:4px; }
+  .legend-swatch { width:10px; height:10px; border-radius:2px; display:inline-block; }
+  footer { margin-top: 28px; font-size: 11px; color: var(--ink2); font-style: italic; }
+  @media (max-width: 1100px) {
+    .kpi-row { grid-template-columns: repeat(3, 1fr); }
+    .chart-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 700px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .chart-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <h1>Launch Performance Dashboard — 8 Weeks Since Launch</h1>
+  <div class="subtitle">This-Year (Z8) vs. Last-Year (Z7) baseline, mapped per the YoY Comparison Mapping. Snapshot generated 2026-08-17 09:00. Static snapshot generated from the workbook. Figures will not update automatically — regenerate this page after the workbook changes.</div>
+
+  <div class="kpi-row">
+    
+      <div class="kpi-card">
+        <div class="kpi-label">Total SC+ Units (to date)</div>
+        <div class="kpi-value" style="color:#2E75B6">555</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Device Units (to date)</div>
+        <div class="kpi-value" style="color:#2E75B6">1,546</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Overall %A/R</div>
+        <div class="kpi-value" style="color:#1F3864">35.9%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total SC+ YoY (to date)</div>
+        <div class="kpi-value" style="color:#D03B3B">-48.8%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Time Elapsed</div>
+        <div class="kpi-value" style="color:#1F3864">19.6%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Overall %A/R Target Achievement</div>
+        <div class="kpi-value" style="color:#D03B3B">91.5%</div>
+      </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-box"><div class="chart-title">Cumulative SC+ Units: This Year vs. Last Year</div><div class="chart-canvas" id="c1"></div></div>
+    <div class="chart-box"><div class="chart-title">%A/R by Model — Target vs. Actual</div><div class="chart-canvas" id="c2"></div></div>
+    <div class="chart-box"><div class="chart-title">SC+ Units by Channel (to date)</div><div class="chart-canvas" id="c3"></div></div>
+    <div class="chart-box"><div class="chart-title">SC+ Units by Model — This Year vs. Last-Year Baseline</div><div class="chart-canvas" id="c4"></div></div>
+    <div class="chart-box"><div class="chart-title">Weekly SC+ Units</div><div class="chart-canvas" id="c5"></div></div>
+    <div class="chart-box"><div class="chart-title">Daily %A/R Trend (SC+ ÷ Device)</div><div class="chart-canvas" id="c6"></div></div>
+    <div class="chart-box"><div class="chart-title">Weekly %WoW Growth</div><div class="chart-canvas" id="c7"></div></div>
+    <div class="chart-box"><div class="chart-title">Weekly YoY Growth %</div><div class="chart-canvas" id="c8"></div></div>
+    <div class="chart-box"><div class="chart-title">Device Units by Channel (to date)</div><div class="chart-canvas" id="c9"></div></div>
+    <div class="chart-box"><div class="chart-title">Top 10 Site Groups — SC+ Units (to date)</div><div class="chart-canvas" id="c10"></div></div>
+    <div class="chart-box"><div class="chart-title">SC+ Units by Duration of Use — TY vs. LY</div><div class="chart-canvas" id="c11"></div></div>
+    <div class="chart-box"><div class="chart-title">SC+ & Device Units by Shop Type (to date)</div><div class="chart-canvas" id="c12"></div></div>
+  </div>
+
+  <footer>Generated from Launch_Performance_Tracker.xlsx. Data is a static snapshot as of the date above — reopen the Excel workbook (or ask for a refreshed page) for the latest figures.</footer>
+
+<script>
+const CHARTS = [{"id": "c1", "type": "line", "labels": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56], "xLabel": "Day since launch", "series": [{"label": "Cumulative SC+ (TY)", "data": [313, 457, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555, 555], "color": "#2E75B6"}, {"label": "Cumulative SC+ (LY, day-aligned)", "data": [232, 305, 357, 416, 478, 523, 552, 569, 597, 639, 697, 754, 797, 819, 838, 866, 894, 926, 960, 988, 1003, 1026, 1044, 1070, 1088, 1112, 1125, 1143, 1158, 1176, 1189, 1205, 1227, 1249, 1262, 1271, 1288, 1298, 1306, 1326, 1345, 1352, 1366, 1367, 1379, 1394, 1410, 1430, 1441, 1450, 1454, 1464, 1472, 1483, 1496, 1506], "color": "#C3C2B7", "dash": "6,4"}], "yFmt": "num"}, {"id": "c2", "type": "bar", "labels": ["Flip8", "Fold8", "Fold8 Ultra", "Total"], "series": [{"label": "Target %A/R", "data": [0.4, 0.38, 0.42, 0.392250970245796], "color": "#C3C2B7"}, {"label": "Actual %A/R (to date)", "data": [0.384083044982699, 0.339439655172414, 0.39209726443769, 0.358990944372574], "color": "#2E75B6"}], "yFmt": "pct"}, {"id": "c3", "type": "bar", "labels": ["Organic", "SF+", "AIS", "eStore"], "series": [{"data": [453, 102, 0, 0], "colors": ["#2A78D6", "#1BAF7A", "#EDA100", "#4A3AA7"]}], "yFmt": "num"}, {"id": "c4", "type": "bar", "labels": ["Flip8", "Fold8", "Fold8 Ultra"], "series": [{"label": "SC+ Units (TY)", "data": [111, 315, 129], "color": "#2E75B6"}, {"label": "SC+ Units (LY baseline)", "data": [752, 754, 754], "color": "#C3C2B7"}], "yFmt": "num"}, {"id": "c5", "type": "bar", "labels": ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8"], "series": [{"data": [555, 0, 0, 0, 0, 0, 0, 0], "color": "#1BAF7A"}], "yFmt": "num"}, {"id": "c6", "type": "line", "labels": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56], "xLabel": "Day since launch", "series": [{"label": "%A/R", "data": [0.363953488372093, 0.368286445012788, 0.413502109704641, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "color": "#EDA100"}], "yFmt": "pct", "legend": false}, {"id": "c7", "type": "bar", "labels": ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8"], "series": [{"data": [0, -1, 0, 0, 0, 0, 0, 0], "colors": ["#0CA30C", "#D03B3B", "#0CA30C", "#0CA30C", "#0CA30C", "#0CA30C", "#0CA30C", "#0CA30C"]}], "yFmt": "pct"}, {"id": "c8", "type": "bar", "labels": ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8"], "series": [{"data": [0.00543478260869565, -1, -1, -1, -1, -1, -1, -1], "colors": ["#0CA30C", "#D03B3B", "#D03B3B", "#D03B3B", "#D03B3B", "#D03B3B", "#D03B3B", "#D03B3B"]}], "yFmt": "pct"}, {"id": "c9", "type": "bar", "labels": ["Organic", "SF+", "AIS", "eStore"], "series": [{"data": [1407, 139, 0, 0], "colors": ["#2A78D6", "#1BAF7A", "#EDA100", "#4A3AA7"]}], "yFmt": "num"}, {"id": "c10", "type": "hbar", "labels": ["M & N COMMUNICATION", "IT CITY", "PAKORN & FRIENDS", "LAKE COMMUNICATION", "BURAPAVAT COMMUNICATION", "POWERFULL COMMUNICATION", "COPPERWIRED PUBLIC", "COMSEVEN", "TG CELLULAR WORLD", "JAYMART MOBILE"], "series": [{"data": [8, 9, 13, 15, 34, 35, 46, 114, 118, 145], "color": "#2E75B6"}], "yFmt": "num"}, {"id": "c11", "type": "bar", "labels": ["12 months", "24 months"], "series": [{"label": "SC+ Units (TY)", "data": [166, 389], "color": "#2E75B6"}, {"label": "SC+ Units (LY)", "data": [618, 1075], "color": "#C3C2B7"}], "yFmt": "num"}, {"id": "c12", "type": "bar", "labels": ["SES", "SPS", "SIS", "Sub-D", "Estore"], "series": [{"label": "SC+ Units", "data": [555, 0, 0, 0, 0], "color": "#1BAF7A"}, {"label": "Device Units", "data": [1546, 0, 0, 0, 0], "color": "#C3C2B7"}], "yFmt": "num"}];
+
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function fmtVal(v, kind) {
+  if (kind === "pct") return (v*100).toFixed(0) + "%";
+  return Math.abs(v) >= 1000 ? (v/1000).toFixed(v%1000===0?0:1) + "k" : Math.round(v).toLocaleString();
+}
+function niceStep(range, targetSteps) {
+  const rough = range / targetSteps || 1;
+  const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+  const norm = rough / mag;
+  let step;
+  if (norm < 1.5) step = 1; else if (norm < 3) step = 2; else if (norm < 7) step = 5; else step = 10;
+  return step * mag;
+}
+function computeTicks(minV, maxV, targetSteps) {
+  targetSteps = targetSteps || 5;
+  let lo = Math.min(0, minV), hi = Math.max(0, maxV);
+  if (hi === lo) hi = lo + (lo === 0 ? 1 : Math.abs(lo)*0.2);
+  const step = niceStep(hi - lo, targetSteps);
+  const niceLo = Math.floor(lo/step)*step, niceHi = Math.ceil(hi/step)*step;
+  const ticks = [];
+  for (let v = niceLo; v <= niceHi + 1e-9; v += step) ticks.push(Math.round(v*1e6)/1e6);
+  return ticks;
+}
+function appendLegend(container, items) {
+  const leg = document.createElement('div');
+  leg.className = 'chart-legend';
+  leg.innerHTML = items.map(it => `<span class="legend-item"><span class="legend-swatch" style="background:${it.color}"></span>${it.label}</span>`).join('');
+  container.appendChild(leg);
+}
+
+function renderLine(container, cfg) {
+  const W = 400, H = 230, padL = 40, padR = 10, padT = 10, padB = 26;
+  const innerW = W-padL-padR, innerH = H-padT-padB;
+  const allVals = cfg.series.flatMap(s => s.data);
+  const ticks = computeTicks(Math.min(...allVals), Math.max(...allVals));
+  const yMin = ticks[0], yMax = ticks[ticks.length-1];
+  const n = cfg.labels.length;
+  const xPos = i => padL + innerW * (n===1?0:i/(n-1));
+  const yPos = v => padT + innerH * (1 - (v-yMin)/(yMax-yMin||1));
+  const svg = el('svg', {viewBox:`0 0 ${W} ${H}`});
+  ticks.forEach(t => {
+    svg.appendChild(el('line',{x1:padL,x2:W-padR,y1:yPos(t),y2:yPos(t),stroke:'#E8E7E2','stroke-width':1}));
+    const txt = el('text',{x:padL-5,y:yPos(t)+3,'text-anchor':'end','font-size':8,fill:'#52514E'});
+    txt.textContent = fmtVal(t, cfg.yFmt); svg.appendChild(txt);
+  });
+  const every = Math.max(1, Math.ceil(n/10));
+  const lastMultiple = Math.floor((n-1)/every)*every;
+  cfg.labels.forEach((lab,i) => {
+    const isMultiple = i % every === 0;
+    const isLast = i === n-1;
+    if (isMultiple || (isLast && (n-1-lastMultiple) >= Math.max(2, every*0.4))) {
+      const txt = el('text',{x:xPos(i),y:H-padB+13,'text-anchor':'middle','font-size':7.5,fill:'#52514E'});
+      txt.textContent = lab; svg.appendChild(txt);
+    }
+  });
+  if (cfg.xLabel) {
+    const txt = el('text',{x:padL+innerW/2,y:H-4,'text-anchor':'middle','font-size':8.5,fill:'#52514E'});
+    txt.textContent = cfg.xLabel; svg.appendChild(txt);
+  }
+  cfg.series.forEach(s => {
+    let d = '';
+    s.data.forEach((v,i) => { d += (i===0?'M':'L') + xPos(i).toFixed(1) + ' ' + yPos(v).toFixed(1) + ' '; });
+    const path = el('path',{d, fill:'none', stroke:s.color, 'stroke-width':2.2, 'stroke-linejoin':'round'});
+    if (s.dash) path.setAttribute('stroke-dasharray', s.dash);
+    svg.appendChild(path);
+  });
+  container.appendChild(svg);
+  if (cfg.legend !== false && cfg.series.length > 1 || (cfg.series.length===1 && cfg.series[0].label && cfg.legend!==false)) {
+    appendLegend(container, cfg.series.map(s => ({label:s.label, color:s.color})));
+  }
+}
+
+function renderBar(container, cfg, horizontal) {
+  const W = 400, H = 230;
+  const hasMultiSeries = cfg.series.length > 1;
+  const perBarColors = cfg.series.length === 1 && cfg.series[0].colors;
+  const allVals = cfg.series.flatMap(s => s.data);
+  const ticks = computeTicks(Math.min(...allVals,0), Math.max(...allVals,0));
+  const vMin = ticks[0], vMax = ticks[ticks.length-1];
+  const n = cfg.labels.length;
+  const nSeries = cfg.series.length;
+
+  if (!horizontal) {
+    const padL = 40, padR = 10, padT = 10, padB = cfg.labels.some(l=>String(l).length>8) ? 34 : 24;
+    const innerW = W-padL-padR, innerH = H-padT-padB;
+    const yPos = v => padT + innerH * (1 - (v-vMin)/(vMax-vMin||1));
+    const zeroY = yPos(0);
+    const svg = el('svg', {viewBox:`0 0 ${W} ${H}`});
+    ticks.forEach(t => {
+      svg.appendChild(el('line',{x1:padL,x2:W-padR,y1:yPos(t),y2:yPos(t),stroke:'#E8E7E2','stroke-width':1}));
+      const txt = el('text',{x:padL-5,y:yPos(t)+3,'text-anchor':'end','font-size':8,fill:'#52514E'});
+      txt.textContent = fmtVal(t, cfg.yFmt); svg.appendChild(txt);
+    });
+    const groupW = innerW / n;
+    const barW = perBarColors ? groupW*0.6 : (groupW*0.7)/nSeries;
+    cfg.labels.forEach((lab,i) => {
+      const gx = padL + groupW*i + groupW/2;
+      cfg.series.forEach((s,si) => {
+        const v = s.data[i];
+        const bx = perBarColors ? gx - barW/2 : gx - (nSeries*barW)/2 + si*barW;
+        const by = Math.min(yPos(v), zeroY);
+        const bh = Math.abs(yPos(v) - zeroY);
+        const color = perBarColors ? s.colors[i] : s.color;
+        svg.appendChild(el('rect', {x:bx.toFixed(1), y:by.toFixed(1), width:Math.max(1,barW-2).toFixed(1), height:Math.max(0,bh).toFixed(1), fill:color, rx:1}));
+      });
+      const txt = el('text',{x:gx,y:H-padB+13,'text-anchor':'middle','font-size':7.5,fill:'#52514E'});
+      txt.textContent = lab.length > 12 ? lab.slice(0,11)+'…' : lab;
+      if (padB > 26) { txt.setAttribute('transform', `rotate(20 ${gx} ${H-padB+13})`); txt.setAttribute('text-anchor','start'); }
+      svg.appendChild(txt);
+    });
+    svg.appendChild(el('line',{x1:padL,x2:W-padR,y1:zeroY,y2:zeroY,stroke:'#B9B8B0','stroke-width':1}));
+    container.appendChild(svg);
+  } else {
+    const padL = 130, padR = 16, padT = 6, padB = 20;
+    const innerW = W-padL-padR, innerH = H-padT-padB;
+    const xPos = v => padL + innerW * ((v-Math.min(0,vMin))/(vMax-Math.min(0,vMin)||1));
+    const svg = el('svg', {viewBox:`0 0 ${W} ${H}`});
+    const rowH = innerH / n;
+    const barH = rowH * 0.6;
+    ticks.forEach(t => {
+      svg.appendChild(el('line',{x1:xPos(t),x2:xPos(t),y1:padT,y2:H-padB,stroke:'#E8E7E2','stroke-width':1}));
+    });
+    cfg.labels.forEach((lab,i) => {
+      const cy = padT + rowH*i + rowH/2;
+      const v = cfg.series[0].data[i];
+      const color = perBarColors ? cfg.series[0].colors[i] : cfg.series[0].color;
+      const x0 = xPos(0), x1 = xPos(v);
+      svg.appendChild(el('rect', {x:Math.min(x0,x1).toFixed(1), y:(cy-barH/2).toFixed(1), width:Math.max(1,Math.abs(x1-x0)).toFixed(1), height:barH.toFixed(1), fill:color, rx:1}));
+      const txt = el('text',{x:padL-6,y:cy+3,'text-anchor':'end','font-size':7.5,fill:'#52514E'});
+      txt.textContent = lab.length > 20 ? lab.slice(0,19)+'…' : lab;
+      svg.appendChild(txt);
+    });
+    container.appendChild(svg);
+  }
+  if (cfg.series.length > 1) {
+    appendLegend(container, cfg.series.map(s => ({label:s.label, color:s.color})));
+  }
+}
+
+CHARTS.forEach(cfg => {
+  const container = document.getElementById(cfg.id);
+  if (cfg.type === 'line') renderLine(container, cfg);
+  else if (cfg.type === 'hbar') renderBar(container, cfg, true);
+  else renderBar(container, cfg, false);
+});
+</script>
+</body>
+</html>
